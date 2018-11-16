@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: rgba(0, 0, 0, 1);
+        }
+        #canvas{
+            display: block;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="600" height="600">your browser is not support canvas</canvas>
+<script type="text/javascript">
+    /**
+    * @auth ccy
+    * @date 2018/11/16
+    * */
+    //自由落体 H=(gt^2)/2 动能 Ek=(mv^2)/2 重力势能:Ep = mgh
+    let x=300,y=60,                 //圆心坐标
+        minHeight = 60,             //最小下落位移
+        maxHeight = 446,            //最大下落位移
+        dir = true;                 //dir true下落，false为弹起
+    (function(){
+        let canvas= document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        draw(ctx);
+    })();
+    function draw(ctx){
+        let currentTime = new Date().getTime();     //开始毫秒数,折返记录一次currentTime
+        let arr_y = [];                             //设置下落位移的数组
+        window.requestAnimationFrame(function init(){
+            if(dir){
+                if(y >= maxHeight){
+                    dir = false;
+                    currentTime = new Date().getTime();
+                }else{
+                    y = y + Math.pow((new Date().getTime() - currentTime)/1000,2)*10/2;
+                    arr_y.push(y);
+                }
+            }else{
+                if(y <= minHeight){
+                    dir = true;
+                    currentTime = new Date().getTime();
+                }else{
+                    y = arr_y.splice(-1,1)[0] || 60;
+                }
+            }
+            drawArc(ctx,x,y);
+            requestAnimationFrame(init);
+        });
+    }
+    //绘制圆球和地面
+    function drawArc(ctx,x,y){
+        ctx.clearRect(0, 0, 600, 600);
+        ctx.beginPath();
+        ctx.arc(x,y,50,0,Math.PI*2);
+        ctx.fillStyle='#98adf0';
+        ctx.fill();
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = '#ffffff';
+        ctx.moveTo(0,500);
+        ctx.lineTo(600,500);
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.closePath();
+        ctx.save();
+    }
+</script>
+</body>
+</html>
